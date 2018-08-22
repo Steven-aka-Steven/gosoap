@@ -18,7 +18,7 @@ func (c Client) MarshalXML(e *xml.Encoder, _ xml.StartElement) error {
 		return fmt.Errorf("definitions is nil")
 	}
 
-	startEnvelope()
+	startEnvelope(c.AdditionalNs)
 	if len(c.HeaderParams) > 0 {
 		startHeader(c.HeaderName, c.Definitions.Types[0].XsdSchema[0].TargetNamespace)
 		for k, v := range c.HeaderParams {
@@ -78,7 +78,7 @@ func recursiveEncode(hm map[string]interface{}) {
 	}
 }
 
-func startEnvelope() {
+func startEnvelope(addNs xml.Attr) {
 	e := xml.StartElement{
 		Name: xml.Name{
 			Space: "",
@@ -88,6 +88,7 @@ func startEnvelope() {
 			{Name: xml.Name{Space: "", Local: "xmlns:xsi"}, Value: "http://www.w3.org/2001/XMLSchema-instance"},
 			{Name: xml.Name{Space: "", Local: "xmlns:xsd"}, Value: "http://www.w3.org/2001/XMLSchema"},
 			{Name: xml.Name{Space: "", Local: "xmlns:soap"}, Value: "http://schemas.xmlsoap.org/soap/envelope/"},
+			addNs,
 		},
 	}
 

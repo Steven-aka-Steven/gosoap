@@ -50,6 +50,8 @@ type Client struct {
 	Header       []byte
 	Username     string
 	Password     string
+	Port		 int
+	AdditionalNs xml.Attr
 
 	payload []byte
 }
@@ -69,11 +71,15 @@ func (c *Client) Call(m string, p Params) (err error) {
 		return err
 	}
 
-	b, err := c.doRequest(c.Definitions.Services[0].Ports[0].SoapAddresses[0].Location)
+//	fmt.Printf("Request: \n%s\n", c.payload)
+	loc := c.Definitions.Services[0].Ports[c.Port].SoapAddresses[0].Location
+//	fmt.Printf("Location: \n%s\n",loc)
+	b, err := c.doRequest(loc)
 	if err != nil {
 		return err
 	}
 
+//	fmt.Printf("Response: \n%s", string(b))
 	var soap SoapEnvelope
 	err = xml.Unmarshal(b, &soap)
 
